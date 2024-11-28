@@ -51,10 +51,12 @@ class _AuthInputsState extends State<_AuthInputs> {
       contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8));
 
   void _authLogin() {
+    final navigator = Navigator.of(context);
     final login = _emailController.text;
     final pass = _passwordController.text;
     if (login == "admin" && pass == "123456") {
       errorAuth = null;
+      navigator.pushNamed("/main");
       print("we are in");
     } else {
       errorAuth = "Incorrect email or password";

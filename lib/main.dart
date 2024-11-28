@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/screens/mainScreen.dart';
 import 'package:movie_tmdb/widgets/authLogin.dart';
 
 void main() {
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
         appBarTheme:
             const AppBarTheme(backgroundColor: Color.fromRGBO(3, 37, 65, 1)),
       ),
-      home: const Authlogin(),
+      routes: {'/': (context) => Authlogin(), "/main": (context) => MainScreen()},
+      initialRoute: "/",
     );
   }
 }
