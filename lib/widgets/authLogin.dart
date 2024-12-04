@@ -40,9 +40,9 @@ class _AuthInputs extends StatefulWidget {
 }
 
 class _AuthInputsState extends State<_AuthInputs> {
-  final _emailController = TextEditingController();
+  final _emailController = TextEditingController(text: "admin");
 
-  final _passwordController = TextEditingController();
+  final _passwordController = TextEditingController(text: "123456");
   String? errorAuth;
 
   final inputStyle = const InputDecoration(

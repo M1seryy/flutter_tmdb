@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/screens/appColors.dart';
 import 'package:movie_tmdb/screens/mainScreen.dart';
 import 'package:movie_tmdb/widgets/authLogin.dart';
 
@@ -15,10 +16,40 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        appBarTheme:
-            const AppBarTheme(backgroundColor: Color.fromRGBO(3, 37, 65, 1)),
-      ),
-      routes: {'/': (context) => Authlogin(), "/main": (context) => MainScreen()},
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Appcolors.dartBlue,
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Appcolors.dartBlue,
+              unselectedItemColor: Colors.white,
+              selectedItemColor: Colors.lightBlue),
+          iconTheme: const IconThemeData(color: Colors.white)),
+      routes: {
+        '/': (context) => const Authlogin(),
+        "/main": (context) => const MainScreen()
+      },
+      onGenerateRoute: (RouteSettings settings) {
+        return MaterialPageRoute<void>(builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.white),
+              title: const Text(
+                "Error",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+            body: const Center(
+              child: Text(
+                "404 Page not found",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        });
+      },
       initialRoute: "/",
     );
   }
