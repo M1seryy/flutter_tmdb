@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/widgets/movieList.dart';
 
+
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -9,9 +11,9 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
   static const List<Widget> selectedOptions = [
     Text("Новини"),
-    Text("Фільми"),
     Movielist(),
     Text("Серіали"),
   ];
