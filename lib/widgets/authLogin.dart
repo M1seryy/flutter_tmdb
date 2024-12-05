@@ -8,7 +8,7 @@ class Authlogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final regularTextStyle =
-        TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+        const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +22,7 @@ class Authlogin extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             _AuthInputs(),
@@ -71,7 +71,7 @@ class _AuthInputsState extends State<_AuthInputs> {
 
   @override
   Widget build(BuildContext context) {
-    final textError = this.errorAuth;
+    final textError = errorAuth;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,9 +113,9 @@ class _AuthInputsState extends State<_AuthInputs> {
             TextButton(
                 style: ButtonStyle(
                     padding: WidgetStateProperty.all<EdgeInsets>(
-                        EdgeInsets.symmetric(horizontal: 20, vertical: 8)),
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8)),
                     backgroundColor: WidgetStateProperty.all(
-                        Color.fromARGB(255, 222, 226, 230))),
+                        const Color.fromARGB(255, 222, 226, 230))),
                 onPressed: _authLogin,
                 child: const Text(
                   "Login",
@@ -162,7 +162,7 @@ class _MainText extends StatelessWidget {
       ),
       TextButton(
           style: ButtonStyle(
-              padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(0))),
+              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
           onPressed: null,
           child: Text(
             "Register",
@@ -174,7 +174,7 @@ class _MainText extends StatelessWidget {
       ),
       TextButton(
           style: ButtonStyle(
-              padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(0))),
+              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
           onPressed: null,
           child: Text(
             "Verify email",

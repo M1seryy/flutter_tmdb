@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: onChnageSelectedIndex,
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Новини"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.movie_filter), label: "Фільми"),
