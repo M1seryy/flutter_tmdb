@@ -113,7 +113,8 @@ class _AuthInputsState extends State<_AuthInputs> {
             TextButton(
                 style: ButtonStyle(
                     padding: WidgetStateProperty.all<EdgeInsets>(
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8)),
+                        const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8)),
                     backgroundColor: WidgetStateProperty.all(
                         const Color.fromARGB(255, 222, 226, 230))),
                 onPressed: _authLogin,
@@ -162,7 +163,8 @@ class _MainText extends StatelessWidget {
       ),
       TextButton(
           style: ButtonStyle(
-              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
+              padding:
+                  WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
           onPressed: null,
           child: Text(
             "Register",
@@ -174,7 +176,8 @@ class _MainText extends StatelessWidget {
       ),
       TextButton(
           style: ButtonStyle(
-              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
+              padding:
+                  WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(0))),
           onPressed: null,
           child: Text(
             "Verify email",

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Movie {
+  final int id;
   final String imageName;
   final String title;
   final String description;
   final String date;
 
   Movie({
+    required this.id,
     required this.imageName,
     required this.title,
     required this.description,
@@ -26,6 +28,7 @@ class _MovielistState extends State<Movielist> {
   List<Movie> _filteredMovies = [];
   List<Movie> _movies = [
     Movie(
+      id: 1,
       imageName:
           'https://thegalileo.co.za/wp-content/uploads/2024/09/The-Galileo-Open-Air-Cinema-Movie-inception-686x1030.webp',
       title: 'Inception',
@@ -34,6 +37,7 @@ class _MovielistState extends State<Movielist> {
       date: '2010-07-16',
     ),
     Movie(
+      id: 2,
       imageName:
           'https://m.media-amazon.com/images/I/91vIHsL-zjL._AC_UF894,1000_QL80_.jpg',
       title: 'Interstellar',
@@ -42,6 +46,7 @@ class _MovielistState extends State<Movielist> {
       date: '2014-11-07',
     ),
     Movie(
+      id: 3,
       imageName:
           'https://cdn.europosters.eu/image/1300/%D0%A4%D0%BE%D1%82%D0%BE%D1%88%D0%BF%D0%B0%D0%BB%D0%B5%D1%80%D0%B8/the-dark-knight-trilogy-joker-i184453.jpg',
       title: 'The Dark Knight',
@@ -50,6 +55,7 @@ class _MovielistState extends State<Movielist> {
       date: '2008-07-18',
     ),
     Movie(
+      id: 4,
       imageName:
           'https://upload.wikimedia.org/wikipedia/ru/b/b3/%D0%90%D0%B2%D0%B0%D1%82%D0%B0%D1%80_%D0%9F%D1%83%D1%82%D1%8C_%D0%B2%D0%BE%D0%B4%D1%8B_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg',
       title: 'Avatar',
@@ -58,6 +64,7 @@ class _MovielistState extends State<Movielist> {
       date: '2009-12-18',
     ),
     Movie(
+      id: 5,
       imageName:
           'https://m.media-amazon.com/images/M/MV5BYWQ4YmNjYjEtOWE1Zi00Y2U4LWI4NTAtMTU0MjkxNWQ1ZmJiXkEyXkFqcGc@._V1_.jpg',
       title: 'Gladiator',
@@ -83,6 +90,11 @@ class _MovielistState extends State<Movielist> {
   void initState() {
     onSearchFilter();
     _searchController.addListener(onSearchFilter);
+  }
+
+  void onMovieDetails(int index) {
+    final id = _movies[index].id;
+    Navigator.of(context).pushNamed("/main/details", arguments: id);
   }
 
   @override
@@ -165,7 +177,7 @@ class _MovielistState extends State<Movielist> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10),
                           onTap: () {
-                            print("Movie card TAP");
+                            onMovieDetails(index);
                           },
                         ),
                       )

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/widgets/PaintCircle.dart';
 import 'package:movie_tmdb/widgets/movieList.dart';
-
-
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -11,12 +10,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
-  static const List<Widget> selectedOptions = [
-    Text("Новини"),
-    Movielist(),
-    Text("Серіали"),
-  ];
   int _selectedIndex = 1;
 
   void onChnageSelectedIndex(index) {
@@ -46,8 +39,16 @@ class _MainScreenState extends State<MainScreen> {
                 icon: Icon(Icons.movie_filter), label: "Фільми"),
             BottomNavigationBarItem(icon: Icon(Icons.tv), label: "Серіали"),
           ]),
-      body: Container(
-        child: selectedOptions[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          // Text("Новини"),
+          Paintcircle(
+            percentage: 0.72,
+          ),
+          Movielist(),
+          Text("Серіали"),
+        ],
       ),
     );
   }

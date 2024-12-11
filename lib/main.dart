@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/screens/appColors.dart';
 import 'package:movie_tmdb/screens/mainScreen.dart';
+import 'package:movie_tmdb/widgets/details/MovieDetails.dart';
 import 'package:movie_tmdb/widgets/authLogin.dart';
 
 void main() {
@@ -26,7 +29,15 @@ class MyApp extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.white)),
       routes: {
         '/': (context) => const Authlogin(),
-        "/main": (context) => const MainScreen()
+        "/main": (context) => const MainScreen(),
+        "/main/details": (context) {
+          final id = ModalRoute.of(context)?.settings.arguments;
+          if (id is int) {
+            return Moviedetails(movieId: id);
+          } else {
+            return Moviedetails(movieId: 1);
+          }
+        },
       },
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(builder: (context) {
