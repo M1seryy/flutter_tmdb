@@ -19,7 +19,13 @@ class Moviedetails extends StatelessWidget {
       body: ColoredBox(
         color: Color.fromRGBO(24, 23, 27, 1.0),
         child: ListView(
-          children: [MainMovieInfo(), Screencast()],
+          children: [
+            MainMovieInfo(),
+            SizedBox(
+              height: 30,
+            ),
+            Screencast()
+          ],
         ),
       ),
     );

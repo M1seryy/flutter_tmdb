@@ -1,10 +1,11 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:movie_tmdb/screens/appColors.dart';
-import 'package:movie_tmdb/screens/mainScreen.dart';
+import 'package:movie_tmdb/Theme/appColors.dart';
+import 'package:movie_tmdb/widgets/auth/auth_model.dart';
+import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen.dart';
 import 'package:movie_tmdb/widgets/details/MovieDetails.dart';
-import 'package:movie_tmdb/widgets/authLogin.dart';
+import 'package:movie_tmdb/widgets/auth/authLogin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
               selectedItemColor: Colors.lightBlue),
           iconTheme: const IconThemeData(color: Colors.white)),
       routes: {
-        '/': (context) => const Authlogin(),
+        '/auth': (context) => AuthProvider(model: AuthModel(), child: const Authlogin()),
         "/main": (context) => const MainScreen(),
         "/main/details": (context) {
           final id = ModalRoute.of(context)?.settings.arguments;
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
           );
         });
       },
-      initialRoute: "/",
+      initialRoute: "/auth",
     );
   }
 }

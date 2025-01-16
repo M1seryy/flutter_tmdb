@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_tmdb/Theme/button_style.dart';
+import 'package:movie_tmdb/widgets/auth/auth_model.dart';
 
 class Authlogin extends StatelessWidget {
   const Authlogin({super.key});
@@ -34,51 +35,23 @@ class Authlogin extends StatelessWidget {
   }
 }
 
-class _AuthInputs extends StatefulWidget {
-  @override
-  State<_AuthInputs> createState() => _AuthInputsState();
-}
-
-class _AuthInputsState extends State<_AuthInputs> {
-  final _emailController = TextEditingController(text: "admin");
-
-  final _passwordController = TextEditingController(text: "123456");
-  String? errorAuth;
+class _AuthInputs extends StatelessWidget {
+  _AuthInputs({super.key});
 
   final inputStyle = const InputDecoration(
       border: OutlineInputBorder(),
       isCollapsed: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8));
 
-  void _authLogin() {
-    final navigator = Navigator.of(context);
-    final login = _emailController.text;
-    final pass = _passwordController.text;
-    if (login == "admin" && pass == "123456") {
-      errorAuth = null;
-      navigator.pushNamed("/main");
-      print("we are in");
-    } else {
-      errorAuth = "Incorrect email or password";
-      print("error");
-    }
-    setState(() {});
-  }
-
-  void _verifyPass() {
-    print("pass verify");
-  }
-
   @override
   Widget build(BuildContext context) {
-    final textError = errorAuth;
-
+    final model = AuthProvider.read(context)?.model;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Email"),
         TextField(
-          controller: _emailController,
+          controller: model?.emailController,
           decoration: inputStyle,
         ),
         const SizedBox(
@@ -86,57 +59,83 @@ class _AuthInputsState extends State<_AuthInputs> {
         ),
         const Text("Password"),
         TextField(
-          controller: _passwordController,
+          controller: model?.passwordController,
           obscureText: true,
           decoration: inputStyle,
         ),
         const SizedBox(
           height: 25,
         ),
-        if (textError != null) ...[
-          const Center(
-              child: Column(
-            children: [
-              Text(
-                "Incorrect email or password",
-                style: TextStyle(color: Colors.red, fontSize: 20),
-              ),
-              SizedBox(
-                height: 18,
-              ),
-            ],
-          )),
-        ],
+        const ErrorMessageWidget(),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-                style: ButtonStyle(
-                    padding: WidgetStateProperty.all<EdgeInsets>(
-                        const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8)),
-                    backgroundColor: WidgetStateProperty.all(
-                        const Color.fromARGB(255, 222, 226, 230))),
-                onPressed: _authLogin,
-                child: const Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                )),
+            const _loginButtonWidget(),
             const SizedBox(
               width: 20,
             ),
             TextButton(
-                onPressed: _verifyPass,
+                onPressed: null,
                 child: Text(
                   "Reset password",
                   style: AppButtonStyle.linkButton,
                 ))
           ],
         )
+      ],
+    );
+  }
+}
+class _loginButtonWidget extends StatelessWidget {
+  const _loginButtonWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final model = AuthProvider.watch(context)?.model;
+    final canPressButton = model?.canAuth ?? false;
+
+    return TextButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        ),
+        backgroundColor: MaterialStateProperty.all(
+          canPressButton ? Colors.blue : Colors.grey,
+        ),
+      ),
+      onPressed: canPressButton
+          ? () async {
+              await model?.auth(context);
+            }
+          : null,
+      child: const Text(
+        'Login',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorMessageWidget extends StatelessWidget {
+  const ErrorMessageWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final errorMessage = AuthProvider.watch(context)?.model.errorMessage;
+    if (errorMessage == null) return const SizedBox.shrink();
+    return const Column(
+      children: [
+        Text(
+          "Incorrect email or password",
+          style: TextStyle(color: Colors.red, fontSize: 20),
+        ),
+        SizedBox(
+          height: 18,
+        ),
       ],
     );
   }

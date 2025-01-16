@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/Theme/app_images.dart';
 import 'package:movie_tmdb/widgets/PaintCircle.dart';
-import 'package:movie_tmdb/widgets/movieList.dart';
+import 'package:movie_tmdb/widgets/movieList/movieList.dart';
+import 'package:movie_tmdb/widgets/screens/news/news_widget.dart';
+import 'package:movie_tmdb/widgets/screens/tvShow/tvShowList.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -43,11 +46,9 @@ class _MainScreenState extends State<MainScreen> {
         index: _selectedIndex,
         children: [
           // Text("Новини"),
-          Paintcircle(
-            percentage: 0.72,
-          ),
-          Movielist(),
-          Text("Серіали"),
+          NewsWidget(),
+          const Movielist(),
+          TWShowListWidget(),
         ],
       ),
     );
