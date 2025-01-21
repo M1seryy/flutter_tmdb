@@ -43,21 +43,17 @@ class api_client {
     return session;
   }
 
-  Future<String> _makeToken() async {
-    final url = makeUri(
-        '/authentication/token/new', <String, dynamic>{"api_key": _API_KEY});
-
+  Future<T> get<T>(String path, T Function(dynamic json) parser,
+      [Map<String, dynamic>? params]) async {
+    final url = makeUri(path, params);
     try {
       final request = await _client.getUrl(url);
       request.headers.set('Authorization', 'Bearer $_API_KEY');
       final responce = await request.close();
-      final json = await responce.jsonDecode() as Map<String, dynamic>;
-      if (responce.statusCode == 401) {
-        throw ApiClientErrors(ApiClientExpeptionType.Auth);
-      }
-      final token = json["request_token"];
-      print("token: $token");
-      return token;
+      final json = await responce.jsonDecode();
+      validateStatusCode(responce, json);
+      final result = parser(json);
+      return result;
     } on SocketException {
       throw ApiClientErrors(ApiClientExpeptionType.Network);
     } on ApiClientErrors {
@@ -65,6 +61,18 @@ class api_client {
     } catch (_) {
       throw ApiClientErrors(ApiClientExpeptionType.Other);
     }
+  }
+
+  Future<String> _makeToken() async {
+    final parser = (dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final token = jsonMap["request_token"] as String;
+      return token;
+    };
+
+    final result = get('/authentication/token/new', parser,
+        <String, dynamic>{"api_key": _API_KEY});
+    return result;
   }
 
   Future<String> _validateUser({
@@ -87,10 +95,8 @@ class api_client {
       request.headers.set('Authorization', 'Bearer $_API_KEY');
       request.write(jsonEncode(params));
       final responce = await request.close();
-      if (responce.statusCode == 401) {
-        throw ApiClientErrors(ApiClientExpeptionType.Auth);
-      }
       final json = await responce.jsonDecode() as Map<String, dynamic>;
+      validateStatusCode(responce, json);
       final token = json["request_token"];
       return token;
     } on SocketException {
@@ -98,6 +104,18 @@ class api_client {
     } on ApiClientErrors {
       rethrow;
     } catch (_) {
+      throw ApiClientErrors(ApiClientExpeptionType.Other);
+    }
+  }
+
+  void validateStatusCode(
+      HttpClientResponse responce, Map<String, dynamic> json) {
+    if (responce.statusCode == 401) {
+      final status = json["status_code"];
+      final code = status is int ? status : 0;
+      if (code == 30) {
+        throw ApiClientErrors(ApiClientExpeptionType.Auth);
+      }
       throw ApiClientErrors(ApiClientExpeptionType.Other);
     }
   }
@@ -118,7 +136,7 @@ class api_client {
       request.write(jsonEncode(params));
       final responce = await request.close();
       final json = await responce.jsonDecode() as Map<String, dynamic>;
-
+      validateStatusCode(responce, json);
       final sessionId = json["session_id"];
       print('session $sessionId');
       return sessionId;
