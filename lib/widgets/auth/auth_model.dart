@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/domain/api_client/api.dart';
+import 'package:movie_tmdb/domain/dataProvider/sessionDataProvider.dart';
+import 'package:movie_tmdb/widgets/navigation/mainNavigation.dart';
 
 class AuthModel extends ChangeNotifier {
   final api_Client = api_client();
@@ -11,45 +15,70 @@ class AuthModel extends ChangeNotifier {
   bool _canAuth = true;
   bool get canAuth => _canAuth;
   bool get authInProcces => !_canAuth;
-
   Future<void> auth(BuildContext context) async {
-    print("start");
     final login = emailController.text;
     final password = passwordController.text;
+
     if (login.isEmpty || password.isEmpty) {
       _errorMessage = "Заповніть поля";
       notifyListeners();
       return;
     }
+
     _errorMessage = null;
     _canAuth = false;
     notifyListeners();
-    final sessionId = await api_client().auth(login: login, password: password);
-    _canAuth = true;
+    String? sessionId;
+    try {
+      sessionId = await api_Client.auth(login: login, password: password);
+      print("session ID $sessionId");
+      _canAuth = true;
+      notifyListeners();
+
+      _canAuth = true;
+      notifyListeners();
+
+      // Перевіряємо, чи компонент ще змонтований у контексті
+    } on ApiClientErrors catch (e) {
+      print("error switch");
+      switch (e.type) {
+        case ApiClientExpeptionType.Network:
+          _errorMessage = "Сервер недоступний";
+        case ApiClientExpeptionType.Auth:
+          _errorMessage = "Неправильний логін або пароль";
+        case ApiClientExpeptionType.Other:
+          _errorMessage = "Сталася помилка спробуйте ще раз";
+      }
+    }
     notifyListeners();
-    print("auth");
+    if (sessionId == null) {
+      notifyListeners();
+      return;
+    }
+    await Sessiondataprovider().setSession(sessionId);
+
     if (context.mounted) {
-      Navigator.of(context).push;
+      Navigator.of(context).pushReplacementNamed(MainNavRoutes.mainScreen);
     }
   }
 }
 
-class AuthProvider extends InheritedNotifier {
-  final AuthModel model;
-  final Widget child;
-  const AuthProvider({
-    super.key,
-    required this.model,
-    required this.child,
-  }) : super(child: child, notifier: model);
+// class AuthProvider extends InheritedNotifier {
+//   final AuthModel model;
+//   final Widget child;
+//   const AuthProvider({
+//     super.key,
+//     required this.model,
+//     required this.child,
+//   }) : super(child: child, notifier: model);
 
-  static AuthProvider? watch(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AuthProvider>();
-  }
+//   static AuthProvider? watch(BuildContext context) {
+//     return context.dependOnInheritedWidgetOfExactType<AuthProvider>();
+//   }
 
-  static AuthProvider? read(BuildContext context) {
-    final widget =
-        context.getElementForInheritedWidgetOfExactType<AuthProvider>()?.widget;
-    return widget is AuthProvider ? widget : null;
-  }
-}
+//   static AuthProvider? read(BuildContext context) {
+//     final widget =
+//         context.getElementForInheritedWidgetOfExactType<AuthProvider>()?.widget;
+//     return widget is AuthProvider ? widget : null;
+//   }
+// }

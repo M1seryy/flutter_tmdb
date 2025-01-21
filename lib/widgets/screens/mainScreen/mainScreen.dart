@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/Theme/app_images.dart';
+import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
+import 'package:movie_tmdb/domain/dataProvider/sessionDataProvider.dart';
 import 'package:movie_tmdb/widgets/PaintCircle.dart';
 import 'package:movie_tmdb/widgets/movieList/movieList.dart';
+import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen_model.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget.dart';
 import 'package:movie_tmdb/widgets/screens/tvShow/tvShowList.dart';
 
@@ -26,6 +29,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+              icon: const Icon(Icons.search),
+              tooltip: 'Show Snackbar',
+              onPressed: () => Sessiondataprovider().setSession(null)),
+        ],
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'TMDB',

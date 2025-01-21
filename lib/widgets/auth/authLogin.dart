@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:movie_tmdb/Theme/button_style.dart';
+import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
 import 'package:movie_tmdb/widgets/auth/auth_model.dart';
 
 class Authlogin extends StatelessWidget {
@@ -45,7 +46,7 @@ class _AuthInputs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = AuthProvider.read(context)?.model;
+    final model = ModelProvider.read<AuthModel>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -86,35 +87,26 @@ class _AuthInputs extends StatelessWidget {
     );
   }
 }
+
 class _loginButtonWidget extends StatelessWidget {
   const _loginButtonWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = AuthProvider.watch(context)?.model;
-    final canPressButton = model?.canAuth ?? false;
+    final model = ModelProvider.watch<AuthModel>(context);
 
     return TextButton(
+      onPressed: model?.canAuth == true
+          ? () async => await model?.auth(context)
+          : null,
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        ),
         backgroundColor: MaterialStateProperty.all(
-          canPressButton ? Colors.blue : Colors.grey,
+          model?.canAuth == true ? Colors.blue : Colors.grey,
         ),
       ),
-      onPressed: canPressButton
-          ? () async {
-              await model?.auth(context);
-            }
-          : null,
       child: const Text(
         'Login',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        ),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -125,18 +117,16 @@ class ErrorMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final errorMessage = AuthProvider.watch(context)?.model.errorMessage;
+    final errorMessage = ModelProvider.watch<AuthModel>(context)?.errorMessage;
     if (errorMessage == null) return const SizedBox.shrink();
-    return const Column(
-      children: [
-        Text(
-          "Incorrect email or password",
-          style: TextStyle(color: Colors.red, fontSize: 20),
-        ),
-        SizedBox(
-          height: 18,
-        ),
-      ],
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        errorMessage,
+        style: const TextStyle(color: Colors.red, fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
