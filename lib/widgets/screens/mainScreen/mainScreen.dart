@@ -4,6 +4,7 @@ import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
 import 'package:movie_tmdb/domain/dataProvider/sessionDataProvider.dart';
 import 'package:movie_tmdb/widgets/PaintCircle.dart';
 import 'package:movie_tmdb/widgets/movieList/movieList.dart';
+import 'package:movie_tmdb/widgets/movieList/movie_list_model.dart';
 import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen_model.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget.dart';
 import 'package:movie_tmdb/widgets/screens/tvShow/tvShowList.dart';
@@ -16,6 +17,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final model = MovieListModel();
   int _selectedIndex = 1;
 
   void onChnageSelectedIndex(index) {
@@ -26,6 +28,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    model.loadMovies();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -54,9 +60,8 @@ class _MainScreenState extends State<MainScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          // Text("Новини"),
           NewsWidget(),
-          const Movielist(),
+          ModelProvider(model: model, child: Movielist()),
           TWShowListWidget(),
         ],
       ),

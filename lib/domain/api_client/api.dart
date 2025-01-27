@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:movie_tmdb/domain/entity/popular.dart';
 
 enum ApiClientExpeptionType {
   Network,
@@ -22,6 +23,8 @@ class api_client {
       "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZGZmZjI0OTJkYWI3NzkzZTQ4MTIwOTFjZmIzZTllMSIsIm5iZiI6MTY1NjY3NTIzOS41NTIsInN1YiI6IjYyYmVkYmE3MjJlNDgwMDQ5NzE5NDNmZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BCI4I9p0BV3tYVhzECcnIfaB2PZfb3wbrkvOPc2D-WI";
 
   static const _IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+
+  static String posterUrl(String path) => _IMAGE_URL + path;
 
   Uri makeUri(String path, [Map<String, dynamic>? params]) {
     final uri = Uri.parse('$_BASE_URL$path');
@@ -151,6 +154,23 @@ class api_client {
     };
     final result = post('/authentication/session/new', parser, bodyParams,
         <String, dynamic>{"api_key": _API_KEY});
+    return result;
+  }
+
+  Future<PopularMovieResponse> getPopular(int page, String locale) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final responce = PopularMovieResponse.fromJson(jsonMap);
+      return responce;
+    }
+
+    ;
+
+    final result = get('/movie/popular', parser, <String, dynamic>{
+      "api_key": _API_KEY,
+      "page": "$page",
+      "language": "uk-UA"
+    });
     return result;
   }
 }
