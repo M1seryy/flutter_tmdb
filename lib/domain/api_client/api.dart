@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:movie_tmdb/domain/entity/movieDetails.dart';
 import 'package:movie_tmdb/domain/entity/popular.dart';
 
 enum ApiClientExpeptionType {
@@ -18,6 +19,7 @@ class ApiClientErrors implements Exception {
 
 class api_client {
   final _client = HttpClient();
+
   static const _BASE_URL = "https://api.themoviedb.org/3";
   static const _API_KEY =
       "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZGZmZjI0OTJkYWI3NzkzZTQ4MTIwOTFjZmIzZTllMSIsIm5iZiI6MTY1NjY3NTIzOS41NTIsInN1YiI6IjYyYmVkYmE3MjJlNDgwMDQ5NzE5NDNmZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BCI4I9p0BV3tYVhzECcnIfaB2PZfb3wbrkvOPc2D-WI";
@@ -92,12 +94,11 @@ class api_client {
   }
 
   Future<String> _makeToken() async {
-    final parser = (dynamic json) {
+    parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
-      print(jsonMap);
       final token = jsonMap["request_token"] as String;
       return token;
-    };
+    }
 
     final result = get('/authentication/token/new', parser,
         <String, dynamic>{"api_key": _API_KEY});
@@ -109,18 +110,17 @@ class api_client {
     required password,
     required user_token,
   }) async {
-    print("validateUser start");
     final bodyParams = <String, dynamic>{
       "username": login,
       "password": password,
       "request_token": user_token,
     };
-    final parser = (dynamic json) {
+    parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
-      print(jsonMap);
       final token = jsonMap["request_token"] as String;
       return token;
-    };
+    }
+
     final result = post('/authentication/token/validate_with_login', parser,
         bodyParams, <String, dynamic>{"api_key": _API_KEY});
     return result;
@@ -145,13 +145,12 @@ class api_client {
       "request_token": user_token,
     };
 
-    final parser = (dynamic json) {
+    parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
-      print(jsonMap);
       final sessionId = jsonMap["session_id"] as String;
-
       return sessionId;
-    };
+    }
+
     final result = post('/authentication/session/new', parser, bodyParams,
         <String, dynamic>{"api_key": _API_KEY});
     return result;
@@ -164,12 +163,41 @@ class api_client {
       return responce;
     }
 
-    ;
-
     final result = get('/movie/popular', parser, <String, dynamic>{
       "api_key": _API_KEY,
       "page": "$page",
       "language": "uk-UA"
+    });
+    return result;
+  }
+
+  Future<MovieDetails> movieDetails(int id, String locale) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final responce = MovieDetails.fromJson(jsonMap);
+      return responce;
+    }
+
+//  final result = get('/movie/{$id}', parser,
+    final result = get('/movie/${id}', parser,
+        <String, dynamic>{"api_key": _API_KEY, "language": locale});
+    return result;
+  }
+
+  Future<PopularMovieResponse> searchMovies(
+      int page, String locale, String query) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final responce = PopularMovieResponse.fromJson(jsonMap);
+      return responce;
+    }
+
+    final result = get('/search/movie', parser, <String, dynamic>{
+      "api_key": _API_KEY,
+      "page": "$page",
+      "language": "uk-UA",
+      'query': query,
+      "include_adult": true.toString(),
     });
     return result;
   }

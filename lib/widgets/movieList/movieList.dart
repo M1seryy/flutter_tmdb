@@ -27,7 +27,7 @@ class Movielist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ModelProvider.watch<MovieListModel>(context);
+    final model = ModelProviderStateFull.watch<MovieListModel>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -36,6 +36,7 @@ class Movielist extends StatelessWidget {
               itemExtent: 163,
               itemCount: model?.movieList.length ?? 0,
               itemBuilder: (BuildContext context, int index) {
+                model?.showNextMoviePage(index);
                 final currentMovie = model?.movieList[index];
                 return Padding(
                   padding:
@@ -70,18 +71,18 @@ class Movielist extends StatelessWidget {
                               height: 163,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return Text(
+                                return const Text(
                                     'Помилка завантаження'); // Текст при помилці
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20,
                             ),
                             Expanded(
                                 child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Text(
@@ -90,7 +91,8 @@ class Movielist extends StatelessWidget {
                                   currentMovie != null
                                       ? currentMovie.title.toString()
                                       : "title",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   currentMovie != null
@@ -99,9 +101,9 @@ class Movielist extends StatelessWidget {
                                       : "date",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.grey),
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
@@ -110,7 +112,8 @@ class Movielist extends StatelessWidget {
                                   currentMovie != null
                                       ? currentMovie.overview
                                       : "date",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ],
                             )),
@@ -136,14 +139,15 @@ class Movielist extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+                onChanged: (value) => model?.searchMovieHandler(value),
                 // controller: _searchController,
                 decoration: InputDecoration(
-              fillColor: Colors.white.withAlpha(235),
-              filled: true,
-              labelText: "Search",
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            )),
+                  fillColor: Colors.white.withAlpha(235),
+                  filled: true,
+                  labelText: "Search",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                )),
           )
         ],
       ),

@@ -46,7 +46,7 @@ class _AuthInputs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ModelProvider.read<AuthModel>(context);
+    final model = ModelProviderStateFull.read<AuthModel>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,7 +93,7 @@ class _loginButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ModelProvider.watch<AuthModel>(context);
+    final model = ModelProviderStateFull.watch<AuthModel>(context);
 
     return TextButton(
       onPressed: model?.canAuth == true
@@ -117,7 +117,8 @@ class ErrorMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final errorMessage = ModelProvider.watch<AuthModel>(context)?.errorMessage;
+    final errorMessage =
+        ModelProviderStateFull.watch<AuthModel>(context)?.errorMessage;
     if (errorMessage == null) return const SizedBox.shrink();
 
     return Padding(

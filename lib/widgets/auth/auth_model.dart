@@ -31,7 +31,6 @@ class AuthModel extends ChangeNotifier {
     String? sessionId;
     try {
       sessionId = await api_Client.auth(login: login, password: password);
-      print("session ID $sessionId");
       _canAuth = true;
       notifyListeners();
 
@@ -40,7 +39,6 @@ class AuthModel extends ChangeNotifier {
 
       // Перевіряємо, чи компонент ще змонтований у контексті
     } on ApiClientErrors catch (e) {
-      print("error switch");
       switch (e.type) {
         case ApiClientExpeptionType.Network:
           _errorMessage = "Сервер недоступний";

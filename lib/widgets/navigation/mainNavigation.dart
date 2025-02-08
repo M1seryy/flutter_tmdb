@@ -3,6 +3,9 @@ import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
 import 'package:movie_tmdb/widgets/auth/authLogin.dart';
 import 'package:movie_tmdb/widgets/auth/auth_model.dart';
 import 'package:movie_tmdb/widgets/details/MovieDetails.dart';
+import 'package:movie_tmdb/widgets/details/MovieDetailsModel.dart';
+import 'package:movie_tmdb/widgets/movieList/movieList.dart';
+import 'package:movie_tmdb/widgets/movieList/movie_list_model.dart';
 import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen.dart';
 import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen_model.dart';
 
@@ -16,10 +19,10 @@ class MainNavigation {
   String initialRoute(bool isAuth) =>
       isAuth ? MainNavRoutes.mainScreen : MainNavRoutes.auth;
   final routes = <String, Widget Function(BuildContext)>{
-    MainNavRoutes.auth: (context) =>
-        ModelProvider(model: AuthModel(), child: const Authlogin()),
-    MainNavRoutes.mainScreen: (context) =>
-        ModelProvider(model: MainscreenModel(), child: const MainScreen()),
+    MainNavRoutes.auth: (context) => ModelProviderStateFull(
+        create: () => AuthModel(), child: const Authlogin()),
+    MainNavRoutes.mainScreen: (context) => ModelProviderStateFull(
+        create: () => MovieListModel(), child: const MainScreen()),
   };
   Route<Object> onGenerateRoute(RouteSettings setting) {
     switch (setting.name) {
@@ -27,7 +30,9 @@ class MainNavigation {
         final arguments = setting.arguments;
         final movieId = arguments is int ? arguments : 0;
         return MaterialPageRoute(
-            builder: (context) => Moviedetails(movieId: movieId));
+            builder: (context) => ModelProviderStateFull(
+                create: () => MovieDetailsModel(movieId: movieId),
+                child: const Moviedetails()));
       default:
         return MaterialPageRoute(
             builder: (context) => Scaffold(

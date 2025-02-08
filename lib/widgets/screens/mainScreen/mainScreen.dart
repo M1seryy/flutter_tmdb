@@ -18,6 +18,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final model = MovieListModel();
+  
   int _selectedIndex = 1;
 
   void onChnageSelectedIndex(index) {
@@ -28,8 +29,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
-  void initState() {
-    model.loadMovies();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    model.setupLocale(context);
+    // model.loadMovies();
   }
 
   Widget build(BuildContext context) {
@@ -60,8 +63,9 @@ class _MainScreenState extends State<MainScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          NewsWidget(),
-          ModelProvider(model: model, child: Movielist()),
+          const NewsWidget(),
+          ModelProviderStateFull(
+              create: () => model, child: Movielist()),
           TWShowListWidget(),
         ],
       ),
