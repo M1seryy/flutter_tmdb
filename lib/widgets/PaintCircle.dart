@@ -15,8 +15,8 @@ class _PaintcircleState extends State<Paintcircle> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
+          decoration: const BoxDecoration(
+            color: Color.fromRGBO(22, 21, 25, 1.0),
           ),
           child: ProgressPercentageText(child: widget.percentage)
           //  CustomPaint(

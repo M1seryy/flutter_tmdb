@@ -17,8 +17,7 @@ class _MoviedetailsState extends State<Moviedetails> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-   ModelProviderStateFull.watch<MovieDetailsModel>(context)
-        ?.setupLocale();
+    ModelProviderStateFull.read<MovieDetailsModel>(context)?.setupLocale();
   }
 
   @override
@@ -27,17 +26,9 @@ class _MoviedetailsState extends State<Moviedetails> {
       appBar: AppBar(
         title: const TextTitleWidget(),
       ),
-      body: ColoredBox(
+      body: const ColoredBox(
         color: Color.fromRGBO(24, 23, 27, 1.0),
-        child: ListView(
-          children: [
-            MainMovieInfo(),
-            SizedBox(
-              height: 30,
-            ),
-            Screencast()
-          ],
-        ),
+        child: _DetailsBody(),
       ),
     );
   }
@@ -55,6 +46,28 @@ class TextTitleWidget extends StatelessWidget {
       model?.movieDetails?.title ?? "Loading...",
       style: const TextStyle(
           color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700),
+    );
+  }
+}
+
+class _DetailsBody extends StatelessWidget {
+  const _DetailsBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final model = ModelProviderStateFull.watch<MovieDetailsModel>(context);
+    final movieDetails = model?.movieDetails;
+    if (movieDetails == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return ListView(
+      children: const [
+        MainMovieInfo(),
+        SizedBox(
+          height: 30,
+        ),
+        Screencast()
+      ],
     );
   }
 }
