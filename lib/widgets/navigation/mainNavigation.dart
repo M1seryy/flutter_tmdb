@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
+import 'package:movie_tmdb/widgets/Trailer/MovieTrailer.dart';
 import 'package:movie_tmdb/widgets/auth/authLogin.dart';
 import 'package:movie_tmdb/widgets/auth/auth_model.dart';
 import 'package:movie_tmdb/widgets/details/MovieDetails.dart';
@@ -13,6 +14,7 @@ abstract class MainNavRoutes {
   static const auth = "auth";
   static const mainScreen = "/";
   static const movieDetails = "/details";
+  static const movieTrailer = "/details/trailer";
 }
 
 class MainNavigation {
@@ -33,6 +35,11 @@ class MainNavigation {
             builder: (context) => ModelProviderStateFull(
                 create: () => MovieDetailsModel(movieId: movieId),
                 child: const Moviedetails()));
+      case MainNavRoutes.movieTrailer:
+        final arguments = setting.arguments;
+        final trailerKey = arguments is String ? arguments : "";
+        return MaterialPageRoute(
+            builder: (context) => MovieTrailer(trailerKey: trailerKey));
       default:
         return MaterialPageRoute(
             builder: (context) => Scaffold(

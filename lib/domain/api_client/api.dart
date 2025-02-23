@@ -138,7 +138,7 @@ class api_client {
     }
   }
 
-  Future<String> _makeSession({ 
+  Future<String> _makeSession({
     required user_token,
   }) async {
     final bodyParams = <String, dynamic>{
@@ -178,8 +178,11 @@ class api_client {
       return responce;
     }
 
-    final result = get('/movie/${id}', parser,
-        <String, dynamic>{"api_key": _API_KEY, "language": locale,"append_to_response":"credits"});
+    final result = get('/movie/${id}', parser, <String, dynamic>{
+      "api_key": _API_KEY,
+      "language": "uk-UA",
+      "append_to_response": "credits,videos"
+    });
     return result;
   }
 

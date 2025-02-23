@@ -4,6 +4,7 @@ import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
 import 'package:movie_tmdb/domain/entity/movie_details_credits.dart';
 import 'package:movie_tmdb/widgets/PaintCircle.dart';
 import 'package:movie_tmdb/widgets/details/MovieDetailsModel.dart';
+import 'package:movie_tmdb/widgets/navigation/mainNavigation.dart';
 
 class MainMovieInfo extends StatelessWidget {
   const MainMovieInfo({super.key});
@@ -153,36 +154,34 @@ class SummaryText extends StatelessWidget {
 }
 
 class PeopleInfoWidget extends StatelessWidget {
-
   const PeopleInfoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final model = ModelProviderStateFull.watch<MovieDetailsModel>(context);
     var crew = model?.movieDetails?.credits.crew;
-if (crew == null || crew.isEmpty) return const SizedBox.shrink();  
-  crew = crew.length >4 ?crew.sublist(0,4) :crew; 
-var crewChunks = <List<Employee>>[];
-for (var i = 0; i < crew.length; i+=2) {
-    crewChunks.add(crew.sublist(i,i+2 > crew.length ? crew.length :i+2));
-}
+    if (crew == null || crew.isEmpty) return const SizedBox.shrink();
+    crew = crew.length > 4 ? crew.sublist(0, 4) : crew;
+    var crewChunks = <List<Employee>>[];
+    for (var i = 0; i < crew.length; i += 2) {
+      crewChunks
+          .add(crew.sublist(i, i + 2 > crew.length ? crew.length : i + 2));
+    }
 
-
-   
-    return  Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 30),
-      child:  Column(
-        children: 
-          crewChunks.map((chunk) => Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: PeopleWidgetRow(employes: chunk),
-          )).toList(),
-          // PeopleWidgetRow(),
-          // SizedBox(
-          //   height: 20,
-          // ),
-          //  PeopleWidgetRow(),
-        
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+        children: crewChunks
+            .map((chunk) => Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: PeopleWidgetRow(employes: chunk),
+                ))
+            .toList(),
+        // PeopleWidgetRow(),
+        // SizedBox(
+        //   height: 20,
+        // ),
+        //  PeopleWidgetRow(),
       ),
     );
   }
@@ -190,43 +189,39 @@ for (var i = 0; i < crew.length; i+=2) {
 
 class PeopleWidgetRow extends StatelessWidget {
   final List<Employee> employes;
-  
+
   const PeopleWidgetRow({
-    super.key, required this.employes,
+    super.key,
+    required this.employes,
   });
- 
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: 
-      employes.map((employee) => PeopleWidgetItem(employee: employee)).toList(),
-     
+      children: employes
+          .map((employee) => PeopleWidgetItem(employee: employee))
+          .toList(),
     );
   }
-
-
 }
 
 class PeopleWidgetItem extends StatelessWidget {
   final Employee employee;
   const PeopleWidgetItem({
-    super.key, required this.employee,
-   
+    super.key,
+    required this.employee,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
-     const _jobStyle =
+    const _jobStyle =
         TextStyle(fontWeight: FontWeight.w500, color: Colors.white);
 
-     const _actorStyle =
+    const _actorStyle =
         TextStyle(fontWeight: FontWeight.w800, color: Colors.white);
-    return  Expanded(
+    return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -279,14 +274,18 @@ class RatingWidget extends StatelessWidget {
     final model = ModelProviderStateFull.watch<MovieDetailsModel>(context);
     var userScore = model?.movieDetails?.voteAverage ?? 0;
     userScore = userScore / 10;
+    final videos = model?.movieDetails?.videos?.results
+        .where((item) => item.type == "Trailer" && item.site == "YouTube");
+    final trailerKey = videos?.isNotEmpty == true ? videos?.first.key : null;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         TextButton(
-          onPressed: null,
+          onPressed: () => null,
+          // Navigator.of(context).pushNamed(MainNavRoutes.movieTrailer),
           child: Row(
             children: [
-              Container(
+              SizedBox(
                 width: 50,
                 height: 50,
                 child: Paintcircle(
@@ -303,23 +302,37 @@ class RatingWidget extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          width: 1,
-          height: 20,
-          color: Colors.grey,
-        ),
-        const Row(
-          children: [
-            Icon(Icons.play_arrow),
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Play trailer",
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        )
+        trailerKey != null
+            ? Row(
+                children: [
+                  Container(
+                    width: 1,
+                    height: 20,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.play_arrow),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(
+                            context, MainNavRoutes.movieTrailer,
+                            arguments: trailerKey),
+                        child: const Text(
+                          "Play trailer",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
+            : const SizedBox.shrink()
       ],
     );
   }

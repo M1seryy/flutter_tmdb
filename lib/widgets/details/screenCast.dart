@@ -1,96 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/domain/api_client/api.dart';
+import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
+import 'package:movie_tmdb/widgets/details/MovieDetailsModel.dart';
 
 class Screencast extends StatelessWidget {
   const Screencast({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final castTextStyle = TextStyle(fontWeight: FontWeight.w600);
+    const castTextStyle = TextStyle(fontWeight: FontWeight.w600);
 
-    return ColoredBox(
+    return const ColoredBox(
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: Text(
               "Screen Cast",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
           ),
           SizedBox(
-            height: 320,
+            height: 330,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Scrollbar(
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 20,
-                    itemExtent: 120,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                                width: 2,
-                                color: const Color.fromARGB(255, 0, 0, 0)),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            clipBehavior: Clip.hardEdge,
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: 2), //----------BAD PRACTICE
-                                  width: 100,
-                                  height: 100,
-                                  child: Image(
-                                      image: NetworkImage(
-                                          'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQz8wN5zKhYp6mfWv_R7PJeKdR3gLB5PbFe1wTMZwxrG-ZHAhZXkLiNvmv5Zr3Gmd0QBW031BUrJIz6eHMDYCgFH9UBU45jVvsvEQaH0J0')),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                          maxLines: 4,
-                                          "Steven Young",
-                                          style: castTextStyle),
-                                      SizedBox(
-                                        height: 7,
-                                      ),
-                                      Text(
-                                          maxLines: 4,
-                                          "Mark Grayson / Invictable (Voice)",
-                                          style: castTextStyle),
-                                      SizedBox(
-                                        height: 7,
-                                      ),
-                                      Text(
-                                          maxLines: 4,
-                                          "8 Episodes",
-                                          style: castTextStyle),
-                                      SizedBox(
-                                        height: 7,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+                child: ActorList(castTextStyle: castTextStyle),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 30),
             child: TextButton(
                 onPressed: null,
                 child: Text(
@@ -102,6 +44,94 @@ class Screencast extends StatelessWidget {
                 )),
           )
         ],
+      ),
+    );
+  }
+}
+
+class ActorList extends StatelessWidget {
+  const ActorList({
+    super.key,
+    required this.castTextStyle,
+  });
+
+  final TextStyle castTextStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final model = ModelProviderStateFull.watch<MovieDetailsModel>(context);
+    var cast = model?.movieDetails?.credits.cast;
+    if (cast == null || cast.isEmpty) return const SizedBox.shrink();
+    return ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: cast.length,
+        itemExtent: 120,
+        itemBuilder: (context, index) {
+          return ActorListItem(
+            castTextStyle: castTextStyle,
+            index: index,
+          );
+        });
+  }
+}
+
+class ActorListItem extends StatelessWidget {
+  final index;
+  const ActorListItem({
+    super.key,
+    required this.castTextStyle,
+    required this.index,
+  });
+
+  final TextStyle castTextStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final model = ModelProviderStateFull.read<MovieDetailsModel>(context);
+    final actor = model!.movieDetails!.credits.cast[index];
+    final actorImage = actor.profilePath;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: AspectRatio(
+        aspectRatio: 390 / 219,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border:
+                Border.all(width: 2, color: const Color.fromARGB(255, 0, 0, 0)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            clipBehavior: Clip.hardEdge,
+            child: Column(
+              children: [
+                Container(
+                    child: actorImage != null
+                        ? Image.network(api_client.posterUrl(actorImage))
+                        : const SizedBox.shrink()),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(maxLines: 4, actor.name, style: castTextStyle),
+                      const SizedBox(
+                        height: 7,
+                      ),
+                      Text(maxLines: 4, actor.character, style: castTextStyle),
+                      const SizedBox(
+                        height: 7,
+                      ),
+                      Text(maxLines: 4, "", style: castTextStyle),
+                      const SizedBox(
+                        height: 7,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

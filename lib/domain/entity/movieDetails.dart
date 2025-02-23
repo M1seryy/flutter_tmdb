@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_tmdb/domain/entity/movie_date_parser.dart';
+import 'package:movie_tmdb/domain/entity/movie_details_videos.dart';
 
 import 'movie_details_credits.dart';
 
@@ -34,7 +35,8 @@ class MovieDetails {
   final double voteAverage;
   final int voteCount;
   final MovieDetailsCredits credits;
-  MovieDetails( {
+  final MovieDetailsVideos? videos;
+  MovieDetails({
     required this.adult,
     required this.backdropPath,
     required this.belongsToCollection,
@@ -61,6 +63,7 @@ class MovieDetails {
     required this.voteAverage,
     required this.voteCount,
     required this.credits,
+    required this.videos,
   });
 
   factory MovieDetails.fromJson(Map<String, dynamic> json) =>
