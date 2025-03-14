@@ -15,9 +15,11 @@ class AuthModel extends ChangeNotifier {
   bool _canAuth = true;
   bool get canAuth => _canAuth;
   bool get authInProcces => !_canAuth;
+
   Future<void> auth(BuildContext context) async {
     final login = emailController.text;
     final password = passwordController.text;
+    int? accountId;
 
     if (login.isEmpty || password.isEmpty) {
       _errorMessage = "Заповніть поля";
@@ -31,6 +33,8 @@ class AuthModel extends ChangeNotifier {
     String? sessionId;
     try {
       sessionId = await api_Client.auth(login: login, password: password);
+      accountId = await api_Client.getAccoutData(sessionId);
+
       _canAuth = true;
       notifyListeners();
 
@@ -49,12 +53,12 @@ class AuthModel extends ChangeNotifier {
       }
     }
     notifyListeners();
-    if (sessionId == null) {
+    if (sessionId == null || accountId == null) {
       notifyListeners();
       return;
     }
     await Sessiondataprovider().setSession(sessionId);
-
+    await Sessiondataprovider().setAccountId(accountId);
     if (context.mounted) {
       Navigator.of(context).pushReplacementNamed(MainNavRoutes.mainScreen);
     }

@@ -73,6 +73,13 @@ class _PosterWidget extends StatelessWidget {
                 ? Image.network(api_client.posterUrl(poster))
                 : const SizedBox.shrink(),
           ),
+          Positioned(
+              top: 10,
+              right: 10,
+              child: IconButton(
+                  onPressed: () => null,
+                  icon: Icon(
+                      model == null ? Icons.favorite : Icons.favorite_outline)))
         ],
       ),
     );

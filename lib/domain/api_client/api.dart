@@ -5,6 +5,19 @@ import 'package:http/http.dart' as http;
 import 'package:movie_tmdb/domain/entity/movieDetails.dart';
 import 'package:movie_tmdb/domain/entity/popular.dart';
 
+enum ApiClientMediaType { Movie, TV }
+
+extension MediaTypeAsString on ApiClientMediaType {
+  String asString() {
+    switch (this) {
+      case ApiClientMediaType.Movie:
+        return "movie";
+      case ApiClientMediaType.TV:
+        return "tv";
+    }
+  }
+}
+
 enum ApiClientExpeptionType {
   Network,
   Auth,
@@ -93,6 +106,19 @@ class api_client {
     }
   }
 
+  Future<int> getAccoutData(String sessionId) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final result = jsonMap["id"] as int;
+      // final responce = MovieDetails.fromJson(jsonMap);
+      return result;
+    }
+
+    final result = get('/account', parser,
+        <String, dynamic>{"api_key": _API_KEY, "session_id": sessionId});
+    return result;
+  }
+
   Future<String> _makeToken() async {
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
@@ -102,6 +128,30 @@ class api_client {
 
     final result = get('/authentication/token/new', parser,
         <String, dynamic>{"api_key": _API_KEY});
+    return result;
+  }
+
+  Future<String> markAsFvourite({
+    required int account_id,
+    required String session_id,
+    required ApiClientMediaType mediaType,
+    required int media_id,
+    required bool isFavorite,
+  }) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final token = jsonMap["request_token"] as String;
+      return token;
+    }
+
+    final bodyParams = <String, dynamic>{
+      "media_type": mediaType.asString(),
+      "media_id": media_id.toString(),
+      "favorite": isFavorite.toString(),
+    };
+
+    final result = post('/account/{$account_id}/favorite', parser, bodyParams,
+        <String, dynamic>{"api_key": _API_KEY, "session_id": session_id});
     return result;
   }
 
@@ -171,6 +221,27 @@ class api_client {
     return result;
   }
 
+  Future<bool> isFavorite(
+    int movieId,
+    String sessionId,
+  ) async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final result = jsonMap['favorite'] as bool;
+      return result;
+    }
+
+    final result = get(
+      '/movie/$movieId/account_states',
+      parser,
+      <String, dynamic>{
+        'api_key': _API_KEY,
+        'session_id': sessionId,
+      },
+    );
+    return result;
+  }
+
   Future<MovieDetails> movieDetails(int id, String locale) async {
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
@@ -178,7 +249,7 @@ class api_client {
       return responce;
     }
 
-    final result = get('/movie/${id}', parser, <String, dynamic>{
+    final result = get('/movie/$id', parser, <String, dynamic>{
       "api_key": _API_KEY,
       "language": "uk-UA",
       "append_to_response": "credits,videos"
