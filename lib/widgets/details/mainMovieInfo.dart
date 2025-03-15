@@ -74,12 +74,15 @@ class _PosterWidget extends StatelessWidget {
                 : const SizedBox.shrink(),
           ),
           Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                  onPressed: () => null,
-                  icon: Icon(
-                      model == null ? Icons.favorite : Icons.favorite_outline)))
+            top: 10,
+            right: 10,
+            child: IconButton(
+              onPressed: () => model?.toggleFavorite(),
+              icon: Icon(model?.favorite == true
+                  ? Icons.favorite
+                  : Icons.favorite_outline),
+            ),
+          )
         ],
       ),
     );

@@ -225,12 +225,12 @@ class api_client {
     int movieId,
     String sessionId,
   ) async {
-    parser(dynamic json) {
+    print("isFavorite $sessionId");
+    final parser = (dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
       final result = jsonMap['favorite'] as bool;
       return result;
-    }
-
+    };
     final result = get(
       '/movie/$movieId/account_states',
       parser,
@@ -276,12 +276,21 @@ class api_client {
   }
 }
 
-extension HttpClientResponceJsonDecode on HttpClientResponse {
+extension HttpClientResponseJsonDecode on HttpClientResponse {
   Future<dynamic> jsonDecode() async {
-    return transform(utf8.decoder)
-        .toList()
-        .then((value) => value.join())
-        .then<dynamic>((v) => json.decode(v));
+    final responseBody = await transform(utf8.decoder).join();
+    // print("Raw response: $responseBody"); // Друкуємо, що саме приходить
+
+    if (responseBody.isEmpty) {
+      throw Exception("Empty response body");
+    }
+
+    try {
+      return json.decode(responseBody);
+    } catch (e) {
+      print("JSON Decode Error: $e");
+      throw Exception("Invalid JSON response");
+    }
   }
 }
 // https://api.themoviedb.org/3/authentication/token/new?api_key=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZGZmZjI0OTJkYWI3NzkzZTQ4MTIwOTFjZmIzZTllMSIsIm5iZiI6MTY1NjY3NTIzOS41NTIsInN1YiI6IjYyYmVkYmE3MjJlNDgwMDQ5NzE5NDNmZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BCI4I9p0BV3tYVhzECcnIfaB2PZfb3wbrkvOPc2D-WI

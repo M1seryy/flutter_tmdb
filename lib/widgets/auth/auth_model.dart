@@ -58,6 +58,7 @@ class AuthModel extends ChangeNotifier {
       return;
     }
     await Sessiondataprovider().setSession(sessionId);
+    print("session id $sessionId");
     await Sessiondataprovider().setAccountId(accountId);
     if (context.mounted) {
       Navigator.of(context).pushReplacementNamed(MainNavRoutes.mainScreen);

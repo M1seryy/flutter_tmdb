@@ -22,8 +22,8 @@ class MovieDetailsModel extends ChangeNotifier {
   Future<void> loadDetails() async {
     _movieDetails = await _apiClient.movieDetails(movieId, "ua-UA");
     final sessionId = await sessionProvider.getSession();
-
     if (sessionId != null) {
+      print(sessionId);
       favorite = await _apiClient.isFavorite(movieId, sessionId);
       // print(favorite);
     } else {
@@ -37,18 +37,18 @@ class MovieDetailsModel extends ChangeNotifier {
     await loadDetails();
   }
 
-//   Future<void> toggleFavorite() async {
-//     final sessionId = await sessionProvider.getSession();
-//     final accauntId = await sessionProvider.getAccountId();
-//     if (sessionId == null || accauntId == null) return;
-//     final newFavorite = !favorite;
-//     favorite = newFavorite;
-//     notifyListeners();
-//     await _apiClient.markAsFvourite(
-//         account_id: accauntId,
-//         session_id: sessionId,
-//         mediaType: ApiClientMediaType.Movie,
-//         media_id: movieId,
-//         isFavorite: newFavorite);
-//   }
+  Future<void> toggleFavorite() async {
+    final sessionId = await sessionProvider.getSession();
+    final accauntId = await sessionProvider.getAccountId();
+    if (sessionId == null || accauntId == null) return;
+    final newFavorite = !favorite;
+    favorite = newFavorite;
+    notifyListeners();
+    await _apiClient.markAsFvourite(
+        account_id: accauntId,
+        session_id: sessionId,
+        mediaType: ApiClientMediaType.Movie,
+        media_id: movieId,
+        isFavorite: newFavorite);
+  }
 }
