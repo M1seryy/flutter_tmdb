@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/Theme/appColors.dart';
+import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
 import 'package:movie_tmdb/main_model.dart';
 import 'package:movie_tmdb/widgets/auth/auth_model.dart';
 import 'package:movie_tmdb/widgets/navigation/mainNavigation.dart';
@@ -13,19 +14,20 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final model = MainModel();
   await model.checkAuth();
-  runApp(MyApp(
-    model: model,
-  ));
+  final app = MyApp();
+  final mainWidget = Provider(model: model, child: app);
+  runApp(mainWidget);
 }
 
 class MyApp extends StatelessWidget {
   static final mainNav = MainNavigation();
-  final MainModel model;
-  const MyApp({required this.model});
+  // final MainModel model;
+  const MyApp();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final model = Provider.read<MainModel>(context);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.white)),
       routes: mainNav.routes,
       onGenerateRoute: mainNav.onGenerateRoute,
-      initialRoute: mainNav.initialRoute(model.isAuth),
+      initialRoute: mainNav.initialRoute(model?.isAuth == true),
     );
   }
 }

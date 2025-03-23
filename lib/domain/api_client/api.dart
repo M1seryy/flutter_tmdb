@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:movie_tmdb/domain/entity/movie.dart';
 import 'package:movie_tmdb/domain/entity/movieDetails.dart';
 import 'package:movie_tmdb/domain/entity/popular.dart';
 
@@ -21,7 +22,8 @@ extension MediaTypeAsString on ApiClientMediaType {
 enum ApiClientExpeptionType {
   Network,
   Auth,
-  Other;
+  Other,
+  SessionExpired;
 }
 
 class ApiClientErrors implements Exception {
@@ -73,6 +75,9 @@ class api_client {
       request.headers.set('Authorization', 'Bearer $_API_KEY');
       request.write(jsonEncode(bodyParams));
       final responce = await request.close();
+      if (responce.statusCode == 201) {
+        return 1 as T;
+      }
       final json = (await responce.jsonDecode()) as dynamic;
       validateStatusCode(responce, json);
       final result = parser(json);
@@ -131,7 +136,7 @@ class api_client {
     return result;
   }
 
-  Future<String> markAsFvourite({
+  Future<int> markAsFvourite({
     required int account_id,
     required String session_id,
     required ApiClientMediaType mediaType,
@@ -139,9 +144,7 @@ class api_client {
     required bool isFavorite,
   }) async {
     parser(dynamic json) {
-      final jsonMap = json as Map<String, dynamic>;
-      final token = jsonMap["request_token"] as String;
-      return token;
+      return 1;
     }
 
     final bodyParams = <String, dynamic>{
@@ -183,6 +186,8 @@ class api_client {
       final code = status is int ? status : 0;
       if (code == 30) {
         throw ApiClientErrors(ApiClientExpeptionType.Auth);
+      } else if (code == 3) {
+        throw ApiClientErrors(ApiClientExpeptionType.SessionExpired);
       }
       throw ApiClientErrors(ApiClientExpeptionType.Other);
     }
@@ -274,6 +279,23 @@ class api_client {
     });
     return result;
   }
+
+  Future<void> popularMovies() async {
+    parser(dynamic json) {
+      final jsonMap = json as Map<String, dynamic>;
+      final responce = Movie.fromJson(jsonMap);
+      print(responce);
+      return responce;
+    }
+
+    final result = get('/movie/popular', parser, <String, dynamic>{
+      "api_key": _API_KEY,
+      "language": "uk-UA",
+      "append_to_response": "credits,videos",
+      "include_video": true,
+    });
+    // return result;
+  }
 }
 
 extension HttpClientResponseJsonDecode on HttpClientResponse {
@@ -293,5 +315,6 @@ extension HttpClientResponseJsonDecode on HttpClientResponse {
     }
   }
 }
+
 // https://api.themoviedb.org/3/authentication/token/new?api_key=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZGZmZjI0OTJkYWI3NzkzZTQ4MTIwOTFjZmIzZTllMSIsIm5iZiI6MTY1NjY3NTIzOS41NTIsInN1YiI6IjYyYmVkYmE3MjJlNDgwMDQ5NzE5NDNmZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BCI4I9p0BV3tYVhzECcnIfaB2PZfb3wbrkvOPc2D-WI
 // https://api.themoviedb.org/3/authentication/token/new?api_key=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZGZmZjI0OTJkYWI3NzkzZTQ4MTIwOTFjZmIzZTllMSIsIm5iZiI6MTY1NjY3NTIzOS41NTIsInN1YiI6IjYyYmVkYmE3MjJlNDgwMDQ5NzE5NDNmZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BCI4I9p0BV3tYVhzECcnIfaB2PZfb3wbrkvOPc2D-WI

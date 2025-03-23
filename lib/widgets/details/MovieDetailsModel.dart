@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movie_tmdb/domain/api_client/api.dart';
 import 'package:movie_tmdb/domain/dataProvider/sessionDataProvider.dart';
@@ -10,6 +11,7 @@ class MovieDetailsModel extends ChangeNotifier {
   final sessionProvider = Sessiondataprovider();
   final _apiClient = api_client();
   final int movieId;
+  Future<void>? Function()? onSessionExired;
   //  DateFormat _dateFormater;
 
   MovieDetails? get movieDetails => _movieDetails;
@@ -44,11 +46,22 @@ class MovieDetailsModel extends ChangeNotifier {
     final newFavorite = !favorite;
     favorite = newFavorite;
     notifyListeners();
-    await _apiClient.markAsFvourite(
-        account_id: accauntId,
-        session_id: sessionId,
-        mediaType: ApiClientMediaType.Movie,
-        media_id: movieId,
-        isFavorite: newFavorite);
+    try {
+      await _apiClient.markAsFvourite(
+          account_id: accauntId,
+          session_id: sessionId,
+          mediaType: ApiClientMediaType.Movie,
+          media_id: movieId,
+          isFavorite: newFavorite);
+    } on ApiClientErrors catch (e) {
+      switch (e.type) {
+        case ApiClientExpeptionType.SessionExpired:
+          await onSessionExired?.call();
+          break;
+        default:
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

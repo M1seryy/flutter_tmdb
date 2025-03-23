@@ -6,6 +6,7 @@ import 'package:movie_tmdb/widgets/PaintCircle.dart';
 import 'package:movie_tmdb/widgets/movieList/movieList.dart';
 import 'package:movie_tmdb/widgets/movieList/movie_list_model.dart';
 import 'package:movie_tmdb/widgets/screens/mainScreen/mainScreen_model.dart';
+import 'package:movie_tmdb/widgets/screens/news/news_model.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget.dart';
 import 'package:movie_tmdb/widgets/screens/tvShow/tvShowList.dart';
 
@@ -18,7 +19,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final model = MovieListModel();
-  
+
   int _selectedIndex = 1;
 
   void onChnageSelectedIndex(index) {
@@ -63,9 +64,11 @@ class _MainScreenState extends State<MainScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          const NewsWidget(),
           ModelProviderStateFull(
-              create: () => model, child: Movielist()),
+            create: () => NewsModel(),
+            child: const NewsWidget(),
+          ),
+          ModelProviderStateFull(create: () => model, child: Movielist()),
           TWShowListWidget(),
         ],
       ),

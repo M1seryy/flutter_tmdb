@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
+import 'package:movie_tmdb/widgets/screens/news/news_model.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget_free_to_watch.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget_loaderboards.dart';
 import 'package:movie_tmdb/widgets/screens/news/news_widget_popular.dart';

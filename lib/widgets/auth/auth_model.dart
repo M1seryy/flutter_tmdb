@@ -50,6 +50,9 @@ class AuthModel extends ChangeNotifier {
           _errorMessage = "Неправильний логін або пароль";
         case ApiClientExpeptionType.Other:
           _errorMessage = "Сталася помилка спробуйте ще раз";
+        case ApiClientExpeptionType.SessionExpired:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     }
     notifyListeners();

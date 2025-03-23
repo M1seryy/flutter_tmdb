@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_tmdb/domain/dataProvider/ProviderInherited.dart';
+import 'package:movie_tmdb/main_model.dart';
 import 'package:movie_tmdb/widgets/details/MovieDetailsModel.dart';
 import 'package:movie_tmdb/widgets/details/mainMovieInfo.dart';
 import 'package:movie_tmdb/widgets/details/screenCast.dart';
@@ -15,6 +16,14 @@ class Moviedetails extends StatefulWidget {
 
 class _MoviedetailsState extends State<Moviedetails> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final model = ModelProviderStateFull.read<MovieDetailsModel>(context);
+    final appModel = Provider.read<MainModel>(context);
+    model?.onSessionExired = () => appModel?.resetSession(context);
+  }
+
   void didChangeDependencies() {
     super.didChangeDependencies();
     ModelProviderStateFull.read<MovieDetailsModel>(context)?.setupLocale();
